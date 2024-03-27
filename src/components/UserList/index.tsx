@@ -1,100 +1,42 @@
-import { useEffect, useState } from "react";
-import { User } from "../../types";
-import axios from "axios";
-import {
-  Box,
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  Container,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemSecondaryAction,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import { useState } from "react";
+import { Container, Box, Button, Typography, Grid } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import useFetchUsers from "../../hooks/useUserFetch";
+import axios from "axios";
+import { User } from "../../types";
+import UserCard from "./UserCard";
+import UserForm from "./UserForm";
+import ConfirmDialog from "./ConfirmDialog";
 import "./styles.scss";
 
 const UserList = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [error, setError] = useState<string>("");
+  const { users, error, setUsers } = useFetchUsers();
+  const [openForm, setOpenForm] = useState<boolean>(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [confirmation, setConfirmation] = useState<string>("");
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+  const handleOpenForm = () => setOpenForm(true);
+  const handleCloseForm = () => setOpenForm(false);
+
+  const handleDeleteClick = (userId: string) => {
+    setSelectedUserId(userId);
+    setOpenConfirmDialog(true);
+  };
+  
+  const handleConfirmDelete = async () => {
+    if (selectedUserId) {
       try {
-        const response = await axios.get<User[]>(
-          "http://localhost:3001/api/users"
-        );
-        setUsers([
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-          {
-            id: "sd323es",
-            name: "Josue Lopez",
-            email: "jomalolep@gmail.com",
-            role: "admin",
-          },
-        ]);
+        await axios.delete(`http://localhost:3001/api/users/${selectedUserId}`);
+        setConfirmation("User deleted successfully!");
+        setUsers(users.filter((user) => user._id !== selectedUserId));
+        setTimeout(() => setConfirmation(""), 3000);
       } catch (error) {
-        setError("Error fetching users");
-        console.error(error);
+        console.error("Error deleting user", error);
+      } finally {
+        setOpenConfirmDialog(false);
       }
-    };
-
-    fetchUsers();
-  }, []);
-
-  const handleCreate = () => {
-    // Lógica para crear un nuevo usuario
-  };
-
-  const handleEdit = (userId: string) => {
-    // Lógica para editar un usuario basado en userId
-  };
-
-  const handleDelete = (userId: string) => {
-    // Lógica para eliminar un usuario basado en userId
+    }
   };
 
   return (
@@ -103,45 +45,33 @@ const UserList = () => {
         <Typography variant="h4" component="h2">
           User List
         </Typography>
-        <Button startIcon={<AddIcon />} variant="contained">
+        <Button
+          startIcon={<AddIcon />}
+          variant="contained"
+          onClick={handleOpenForm}
+        >
           Create
         </Button>
       </Box>
       {error && <Typography color="error">{error}</Typography>}
+      {confirmation && <Typography color="primary">{confirmation}</Typography>}
       <Grid container spacing={4}>
-        {users.map((user) => (
-          <Grid item xs={12} sm={6} md={4} key={user.id}>
-            <Card>
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  {user.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {user.email}{" "}
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="primary"
-                  startIcon={<EditIcon />}
-                  onClick={() => handleEdit(user.id)}
-                >
-                  Edit
-                </Button>
-                <Button
-                  size="small"
-                  color="secondary"
-                  startIcon={<DeleteIcon />}
-                  onClick={() => handleDelete(user.id)}
-                >
-                  Delete
-                </Button>
-              </CardActions>
-            </Card>
+        {users.map((user: User) => (
+          <Grid item xs={12} sm={6} md={4} key={user._id}>
+            <UserCard
+              user={user}
+              onEdit={() => {}}
+              onDelete={() => handleDeleteClick(user._id)}
+            />
           </Grid>
         ))}
       </Grid>
+      <UserForm setUsers={setUsers} open={openForm} onClose={handleCloseForm} />
+      <ConfirmDialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </Container>
   );
 };
