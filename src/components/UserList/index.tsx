@@ -9,6 +9,7 @@ import UserCard from "./UserCard";
 import ConfirmDialog from "./ConfirmDialog";
 import "./styles.scss";
 import UserForm from "./UserForm";
+import { Link } from "react-router-dom";
 
 const UserList = () => {
   const { users, error, setUsers } = useFetchUsers();
@@ -66,12 +67,14 @@ const UserList = () => {
       {confirmation && <Typography color="primary">{confirmation}</Typography>}
       <Grid container spacing={4}>
         {users.map((user: User) => (
-          <Grid item xs={12} sm={6} md={4} key={user._id}>
-            <UserCard
-              user={user}
-              onEdit={() => handleOpenFormForEdit(user)}
-              onDelete={() => handleDeleteClick(user._id)}
-            />
+          <Grid item xs={12} sm={6} md={4} key={user._id} className="user-card">
+            <Link to={`/users/${user._id}`} state={{ fromUserList: true }}>
+              <UserCard
+                user={user}
+                onEdit={() => handleOpenFormForEdit(user)}
+                onDelete={() => handleDeleteClick(user._id)}
+              />
+            </Link>
           </Grid>
         ))}
       </Grid>
