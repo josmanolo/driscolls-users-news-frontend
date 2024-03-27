@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { User } from "../../../types";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,14 +15,21 @@ import {
   Typography,
 } from "@mui/material";
 import axios from "axios";
+import { User } from "../../../types";
 
 interface UserFormProps {
   open: boolean;
   onClose: () => void;
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>; 
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+  currentUser?: User | null;
 }
 
-const UserForm = ({ open, onClose, setUsers }: UserFormProps) => {
+const UserForm = ({
+  open,
+  onClose,
+  setUsers,
+  currentUser,
+}: UserFormProps) => {
   const [user, setUser] = useState<User>({
     _id: "",
     name: "",
@@ -33,6 +39,24 @@ const UserForm = ({ open, onClose, setUsers }: UserFormProps) => {
   });
   const [error, setError] = useState<string>("");
   const [confirmation, setConfirmation] = useState<string>("");
+
+  useEffect(() => {
+    if (currentUser) {
+      setUser({
+        _id: currentUser._id || "",
+        name: currentUser.name || "",
+        email: currentUser.email || "",
+        role: currentUser.role || "",
+        password: currentUser.password || "",
+      });
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!open) {
+      setUser({ _id: "", name: "", email: "", role: "", password: "" });
+    }
+  }, [open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -46,24 +70,36 @@ const UserForm = ({ open, onClose, setUsers }: UserFormProps) => {
   };
 
   const handleSubmit = async () => {
+    const isEditing = !!currentUser;
+
+    const method = isEditing ? "put" : "post";
+    const url = `http://localhost:3001/api/users/${
+      isEditing ? currentUser._id : ""
+    }`;
+
     try {
-      await axios.post<User>("http://localhost:3001/api/users", user);
-      setConfirmation("User created successfully!");
-      setUsers(prevUsers => [...prevUsers, user]);
+      const response = await axios[method](url, user);
+      const updatedUser = response.data;
+
+      if (isEditing) {
+        setUsers((prev) =>
+          prev.map((user) =>
+            user._id === updatedUser._id ? updatedUser : user
+          )
+        );
+      } else {
+        setUsers((prev) => [...prev, updatedUser]);
+      }
+
+      setConfirmation("User saved successfully!");
       setTimeout(() => {
         onClose();
         setConfirmation("");
         setError("");
-        setUser({
-          _id: "",
-          name: "",
-          email: "",
-          role: "",
-          password: "",
-        });
+        setUser({ _id: "", name: "", email: "", role: "", password: "" });
       }, 1500);
     } catch (error) {
-      setError("Error creating user");
+      setError("Error saving user");
     }
   };
 
@@ -120,7 +156,7 @@ const UserForm = ({ open, onClose, setUsers }: UserFormProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Add User</Button>
+        <Button onClick={handleSubmit}>Save User</Button>
       </DialogActions>
       {error && (
         <Typography color="error" className="form-message">
