@@ -1,44 +1,35 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import "./styles.scss";
+import { RootState, useAppDispatch } from "../../app/store";
+import { useSelector } from "react-redux";
+import { login } from "../../state/auth.slice";
+import { FAILED } from "../../state/status";
 
 const Login = () => {
-  const { login } = useAuth();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const { status, error } = useSelector((state: RootState) => state.auth);
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    dispatch(login({ email, password }))
+      .unwrap()
+      .then((res) => {
 
-    try {
-      const response = await axios.post<{
-        token: string;
-        user: { _id: string; name: string; email: string; role: string };
-      }>("http://localhost:3001/api/auth/login", { email, password });
+        const userRole = res.user.role;
+        
+        console.log(res)
 
-      const {
-        data: { user, token },
-      } = response;
-
-      login(user, token);
-
-      const userRole = user.role;
-      if (userRole === "admin") {
-        navigate("/users");
-      } else {
-        navigate("/news");
-      }
-
-      setError("");
-    } catch (error) {
-      console.error(error);
-      setError("Invalid email or password");
-    }
+        if (userRole === "admin") {
+          navigate("/users");
+        } else {
+          navigate("/news");
+        }
+      });
   };
 
   return (
@@ -74,7 +65,7 @@ const Login = () => {
           >
             Login
           </Button>
-          {error && <Typography color="error">{error}</Typography>}
+          {status === FAILED && <Typography color="error">{error}</Typography>}
         </Box>
       </Box>
     </Container>

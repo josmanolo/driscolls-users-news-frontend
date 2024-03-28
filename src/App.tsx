@@ -14,9 +14,9 @@ function App() {
         <Route
           path="/users"
           element={
-            
+            <PrivateRoute>
               <UserList />
-            
+            </PrivateRoute>
           }
         />
         <Route

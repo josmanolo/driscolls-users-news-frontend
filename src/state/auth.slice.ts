@@ -1,38 +1,73 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../types";
-
-
+import axios from "axios";
+import { FAILED, IDLE, LOADING, SUCCEEDED } from "./status";
+interface LoginResponse {
+  user: User;
+  token: string;
+}
+interface LoginError {
+  message: string;
+}
 interface AuthState {
-  isAuthenticated: boolean;
-  token: string | null;
   user: User | null;
+  token: string | null;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
 }
 
 const initialState: AuthState = {
-  isAuthenticated: false,
+  error: null,
   token: null,
   user: null,
+  status: IDLE,
 };
+
+export const login = createAsyncThunk<
+  LoginResponse,
+  { email: string; password: string },
+  { rejectValue: LoginError }
+>("auth/login", async ({ email, password }, { rejectWithValue }) => {
+  try {
+    const response = await axios.post<LoginResponse>(
+      "http://localhost:3001/api/auth/login",
+      { email, password }
+    );
+    return response.data;
+  } catch (error: any) {
+    return rejectWithValue(error.response.data);
+  }
+});
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {
-    setCredentials: (
-      state,
-      action: PayloadAction<{ token: string; user: User }>
-    ) => {
-      state.isAuthenticated = true;
-      state.token = action.payload.token;
-      state.user = action.payload.user;
-    },
-    setLogout: (state) => {
-      state.isAuthenticated = false;
-      state.token = null;
-      state.user = null;
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(login.pending, (state) => {
+        state.status = LOADING;
+      })
+      .addCase(
+        login.fulfilled,
+        (state, action: PayloadAction<LoginResponse>) => {
+          console.log(action.payload)
+          state.status = SUCCEEDED;
+          state.user = action.payload.user;
+          state.token = action.payload.token;
+          state.error = null;
+        }
+      )
+      .addCase(
+        login.rejected,
+        (state, action: PayloadAction<LoginError | undefined>) => {
+          state.status = FAILED;
+          state.error = action.payload?.message || "Error at login";
+        }
+      );
   },
 });
 
-export const { setCredentials, setLogout } = authSlice.actions;
-export default authSlice.reducer;
+
+const { reducer: authReducer } = authSlice;
+export default authReducer;

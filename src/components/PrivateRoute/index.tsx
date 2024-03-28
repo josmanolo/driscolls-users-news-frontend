@@ -1,16 +1,18 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
 interface PrivateRouteProps {
-    children: React.ReactElement;
+  children: React.ReactElement;
 }
 
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const { isAuthenticated } = useAuth();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.user !== null
+  );
 
-  if(!isAuthenticated) {
-    return <Navigate to='/' replace />
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
