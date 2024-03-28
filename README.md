@@ -1,70 +1,89 @@
-# Getting Started with Create React App
+# Driscolls Users News App Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend for the Driscolls Users News App, developed with React
 
-## Available Scripts
+## Important Note
 
-In the project directory, you can run:
+Before running the front-end application, you must first have the backend server running. The backend code is stored in a separate repository and must be cloned, set up, and launched. Please visit the backend repository at [Driscolls Users News App Backend](https://github.com/josmanolo/driscolls-users-news-app) for instructions on how to get it up and running.
 
-### `npm start`
+## Application Functionality
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The application starts with a login page. You can log in using the following credentials:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+**For Admin Role:**
 
-### `npm test`
+`Email: man@gmail.com `
+`Password: 123`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Admin users have access to both the User Management and News sections. Within the User Management panel, admins can register, edit, and delete users.
 
-### `npm run build`
+**For User Role:**`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+`Email: josmanolo@gmail.com `
+`Password: 123`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Standard users only have access to the News section where they can view the list of news articles.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Prerequisites
 
-### `npm run eject`
+Before you begin, ensure you have met the following requirements:
+- You have installed [Node.js](https://nodejs.org/) version 14 or higher.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Installation
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To install the Driscolls Users News App Frontend, follow these steps:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Using HTTPS:`
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+git clone <https://github.com/yourusername/driscolls-users-news-frontend.git>
 
-## Learn More
+`Using SSH:`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+git clone <git@github.com>:yourusername/driscolls-users-news-frontend.git
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+`Using GitHub CLI:`
 
-### Code Splitting
+gh repo clone yourusername/driscolls-users-news-frontend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`Without Cloning`
+Download the ZIP file from the GitHub repository and extract it.
+ ## Usage
 
-### Analyzing the Bundle Size
+To run the Driscolls Users News App Frontend, follow these steps:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+1. Navigate to the project directory:`
 
-### Making a Progressive Web App
+`cd driscolls-users-news-frontend`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+2. Install the required dependencies:
 
-### Advanced Configuration
+`npm install`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3. Start the React development server:
 
-### Deployment
+`npm start`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+ The app will launch in your default browser at `http://localhost:3000`.
 
-### `npm run build` fails to minify
+## Building for Production
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To build the app for production, run:`
+
+npm run build
+
+
+`This will generate the `build` folder that you can serve using any web server.
+
+## Project Structure
+
+The frontend project structure should look something like this:`
+
+public/ src/ components/ hooks/ utils/ App.js index.js ... .env .gitattributes .gitignore package-lock.json package.json README.md
+
+ `## Contributing`
+
+Contributions to the Driscolls Users News App Frontend are welcome! Feel free to fork the repository, make your changes, and submit a pull request.
+
+## License
+
+This project uses the following license: [ISC](https://opensource.org/licenses/ISC).`
