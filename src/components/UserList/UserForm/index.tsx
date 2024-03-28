@@ -14,21 +14,25 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { User } from "../../../types";
+import { useAppDispatch } from "../../../app/store";
+import { addUser, fetchUsers, updateUser } from "../../../state/user.slice";
+import { FAILED } from "../../../state/status";
 
 interface UserFormProps {
   open: boolean;
   onClose: () => void;
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   currentUser?: User | null;
+  status?: string | null;
+  error?: string | null;
 }
 
 const UserForm = ({
   open,
   onClose,
-  setUsers,
   currentUser,
+  status,
+  error,
 }: UserFormProps) => {
   const [user, setUser] = useState<User>({
     _id: "",
@@ -37,31 +41,19 @@ const UserForm = ({
     role: "",
     password: "",
   });
-  const [error, setError] = useState<string>("");
   const [confirmation, setConfirmation] = useState<string>("");
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (currentUser) {
-      setUser({
-        _id: currentUser._id || "",
-        name: currentUser.name || "",
-        email: currentUser.email || "",
-        role: currentUser.role || "",
-        password: currentUser.password || "",
-      });
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    if (!open) {
+    if (!currentUser && open) {
       setUser({ _id: "", name: "", email: "", role: "", password: "" });
+    } else if (currentUser) {
+      setUser(currentUser);
     }
-  }, [open]);
+  }, [currentUser, open]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      target: { name, value },
-    } = e;
+    const { name, value } = e.target;
     setUser({ ...user, [name]: value });
   };
 
@@ -69,43 +61,30 @@ const UserForm = ({
     setUser({ ...user, role: e.target.value });
   };
 
-  const handleSubmit = async () => {
-    const isEditing = !!currentUser;
-
-    const method = isEditing ? "put" : "post";
-    const url = `http://localhost:3001/api/users/${
-      isEditing ? currentUser._id : ""
-    }`;
-
-    try {
-      const response = await axios[method](url, user);
-      const updatedUser = response.data;
-
-      if (isEditing) {
-        setUsers((prev) =>
-          prev.map((user) =>
-            user._id === updatedUser._id ? updatedUser : user
-          )
-        );
-      } else {
-        setUsers((prev) => [...prev, updatedUser]);
-      }
-
-      setConfirmation("User saved successfully!");
-      setTimeout(() => {
+  const handleSubmit = () => {
+    const action = currentUser?._id ? updateUser(user) : addUser(user);
+    dispatch(action)
+      .unwrap()
+      .then(() => {
+        dispatch(fetchUsers());
+        setConfirmation("User saved successfully!");
         onClose();
+      })
+      .finally(() => {
         setConfirmation("");
-        setError("");
-        setUser({ _id: "", name: "", email: "", role: "", password: "" });
-      }, 1500);
-    } catch (error) {
-      setError("Error saving user");
-    }
+        setUser({
+          _id: "",
+          name: "",
+          email: "",
+          role: "",
+          password: "",
+        });
+      });
   };
 
   return (
     <Dialog open={open}>
-      <DialogTitle>Add New User</DialogTitle>
+      <DialogTitle>{currentUser ? "Edit User" : "Add New User"}</DialogTitle>
       <DialogContent>
         <Box component="form" noValidate autoComplete="off">
           <TextField
@@ -158,7 +137,7 @@ const UserForm = ({
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleSubmit}>Save User</Button>
       </DialogActions>
-      {error && (
+      {status === FAILED && (
         <Typography color="error" className="form-message">
           {error}
         </Typography>

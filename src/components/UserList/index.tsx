@@ -1,8 +1,13 @@
-import { useState } from "react";
-import { Container, Box, Button, Typography, Grid } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import useFetchUsers from "../../hooks/useUserFetch";
-import axios from "axios";
 import { User } from "../../types";
 import UserCard from "./UserCard";
 
@@ -10,9 +15,12 @@ import ConfirmDialog from "./ConfirmDialog";
 import "./styles.scss";
 import UserForm from "./UserForm";
 import { Link } from "react-router-dom";
+import { deleteUser, fetchUsers } from "../../state/user.slice";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../../app/store";
+import { FAILED, LOADING, SUCCEEDED } from "../../state/status";
 
 const UserList = () => {
-  const { users, error, setUsers } = useFetchUsers();
   const [openForm, setOpenForm] = useState<boolean>(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -20,8 +28,21 @@ const UserList = () => {
   const [currentUserForEdit, setCurrentUserForEdit] = useState<User | null>(
     null
   );
+  const dispatch = useAppDispatch();
+  const {
+    entities: users,
+    status,
+    error,
+  } = useSelector((state: RootState) => state.users);
 
-  const handleOpenForm = () => setOpenForm(true);
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+
+  const handleOpenForm = () => {
+    setCurrentUserForEdit(null);
+    setOpenForm(true);
+  };
   const handleCloseForm = () => setOpenForm(false);
 
   const handleDeleteClick = (userId: string) => {
@@ -29,18 +50,22 @@ const UserList = () => {
     setOpenConfirmDialog(true);
   };
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (selectedUserId) {
-      try {
-        await axios.delete(`http://localhost:3001/api/users/${selectedUserId}`);
-        setConfirmation("User deleted successfully!");
-        setUsers(users.filter((user) => user._id !== selectedUserId));
-        setTimeout(() => setConfirmation(""), 3000);
-      } catch (error) {
-        console.error("Error deleting user", error);
-      } finally {
-        setOpenConfirmDialog(false);
-      }
+      dispatch(deleteUser(selectedUserId))
+        .unwrap()
+        .then(() => {
+          setConfirmation("User deleted successfully!");
+          dispatch(fetchUsers());
+          setTimeout(() => setConfirmation(""), 3000);
+        })
+        .catch((error) => {
+          console.error("Error deleting user", error);
+        })
+        .finally(() => {
+          setOpenConfirmDialog(false);
+          setSelectedUserId(null);
+        });
     }
   };
 
@@ -63,26 +88,35 @@ const UserList = () => {
           Create
         </Button>
       </Box>
-      {error && <Typography color="error">{error}</Typography>}
+      {status === LOADING && <CircularProgress />}
+      {status === FAILED && <Typography color="error">{error}</Typography>}
       {confirmation && <Typography color="primary">{confirmation}</Typography>}
-      <Grid container spacing={4}>
-        {users.map((user: User) => (
-          <Grid item xs={12} sm={6} md={4} key={user._id} className="user-card">
-            <Link to={`/users/${user._id}`} state={{ fromUserList: true }}>
+      {status === SUCCEEDED && (
+        <Grid container spacing={4}>
+          {users.map((user: User) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={user._id}
+              className="user-card"
+            >
               <UserCard
                 user={user}
                 onEdit={() => handleOpenFormForEdit(user)}
                 onDelete={() => handleDeleteClick(user._id)}
               />
-            </Link>
-          </Grid>
-        ))}
-      </Grid>
+            </Grid>
+          ))}
+        </Grid>
+      )}
       <UserForm
-        setUsers={setUsers}
         open={openForm}
         onClose={handleCloseForm}
         currentUser={currentUserForEdit}
+        status={status}
+        error={error}
       />
       <ConfirmDialog
         open={openConfirmDialog}

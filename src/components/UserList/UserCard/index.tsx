@@ -7,7 +7,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'; 
 import { User } from "../../../types";
+import { Link } from "react-router-dom";
 
 interface UserCardProps {
   user: User;
@@ -41,6 +43,16 @@ const UserCard = ({ user, onEdit, onDelete }: UserCardProps) => (
         onClick={() => onDelete(user._id)}
       >
         Delete
+      </Button>
+      <Button
+        size="small"
+        color="primary"
+        startIcon={<AccountCircleIcon />}
+        component={Link}
+        to={`/users/${user._id}`}
+        state={{ fromUserList: true }}
+      >
+        Profile
       </Button>
     </CardActions>
   </Card>
