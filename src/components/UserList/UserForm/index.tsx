@@ -34,13 +34,7 @@ interface ValidationErrors {
   password: string;
 }
 
-const UserForm = ({
-  open,
-  onClose,
-  currentUser,
-  status,
-  error,
-}: UserFormProps) => {
+const UserForm = ({ open, onClose, currentUser, status }: UserFormProps) => {
   const [user, setUser] = useState<User>({
     _id: "",
     name: "",
@@ -69,8 +63,13 @@ const UserForm = ({
     setUser({ ...user, [name]: value });
   };
 
-  const handleRoleChange = (e: SelectChangeEvent) => {
-    setUser({ ...user, role: e.target.value });
+  const handleRoleChange = (event: SelectChangeEvent) => {
+    const { value } = event.target;
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      role: value ?? "",
+    }));
   };
 
   const handleSubmit = () => {
@@ -103,6 +102,9 @@ const UserForm = ({
         .unwrap()
         .then(() => {
           onClose();
+          setUser({ _id: "", name: "", email: "", role: "", password: "" });
+          setValidationErrors({ name: "", email: "", password: "" });
+          dispatch(fetchUsers());
         })
         .catch((error) => {
           console.error(error);
@@ -171,18 +173,11 @@ const UserForm = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{t("userForm.cancel")}</Button>
-        <Button onClick={handleSubmit}>
-          {t("userForm.saveUser")}
-        </Button>
+        <Button onClick={handleSubmit}>{t("userForm.saveUser")}</Button>
       </DialogActions>
       {status === FAILED && (
         <Typography color="error" className="form-message">
           {t("userForm.error")}
-        </Typography>
-      )}
-      {status === SUCCEEDED && (
-        <Typography color="primary" className="form-message">
-          {t("userForm.userSavedSuccessfully")}
         </Typography>
       )}
     </Dialog>

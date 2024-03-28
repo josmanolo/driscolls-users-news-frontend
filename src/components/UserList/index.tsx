@@ -39,12 +39,16 @@ const UserList = () => {
   const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    if (user?.role !== "admin") {
-      navigate("/news");
+    if (status === SUCCEEDED) {
+      if (user?.role !== "admin") {
+        navigate("/news");
+      }
     }
+  }, [navigate, status, user?.role]);
 
+  useEffect(() => {
     dispatch(fetchUsers());
-  }, [dispatch, navigate, user?.role]);
+  }, [dispatch]);
 
   const handleOpenForm = () => {
     setCurrentUserForEdit(null);
@@ -58,6 +62,7 @@ const UserList = () => {
   };
 
   const handleConfirmDelete = () => {
+    console.log(selectedUserId);
     if (selectedUserId) {
       dispatch(deleteUser(selectedUserId))
         .unwrap()
@@ -85,7 +90,7 @@ const UserList = () => {
     <Container maxWidth="lg" className="users-list">
       <Box className="list-header">
         <Typography variant="h4" component="h2">
-          {t("userList.title")} 
+          {t("userList.title")}
         </Typography>
         <Button
           startIcon={<AddIcon />}
