@@ -79,11 +79,3 @@ npm run build
 The frontend project structure should look something like this:`
 
 public/ src/ components/ hooks/ utils/ App.js index.js ... .env .gitattributes .gitignore package-lock.json package.json README.md
-
- `## Contributing`
-
-Contributions to the Driscolls Users News App Frontend are welcome! Feel free to fork the repository, make your changes, and submit a pull request.
-
-## License
-
-This project uses the following license: [ISC](https://opensource.org/licenses/ISC).`
