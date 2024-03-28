@@ -1,0 +1,62 @@
+{
+  "login": {
+    "welcome": "Login to News App",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "loginButton": "Login",
+    "loginFailed": "Login failed"
+  },
+  "news": {
+    "fetchError": "Error fetching news",
+    "loadingNews": "Loading news...",
+    "title": "News"
+  },
+  "newsCard": {
+    "goToArticle": "Go to Article"
+  },
+  "header": {
+    "newsApp": "News App",
+    "news": "News",
+    "users": "Users",
+    "logout": "Logout"
+  },
+  "userList": {
+    "title": "User List",
+    "create": "Create",
+    "deleteSuccess": "User deleted successfully!",
+    "deleteError": "Error deleting user"
+  },
+  "userCard": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "profile": "Profile"
+  },
+  "confirmDialog": {
+    "title": "Confirm Delete",
+    "content": "Are you sure you want to delete this user?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "userForm": {
+    "editUser": "Edit User",
+    "addNewUser": "Add New User",
+    "name": "Name",
+    "emailAddress": "Email Address",
+    "password": "Password",
+    "role": "Role",
+    "user": "User",
+    "admin": "Admin",
+    "cancel": "Cancel",
+    "saveUser": "Save User",
+    "successMessage": "User saved successfully!",
+    "error": "Error saving user"
+  },
+  "userProfile": {
+    "errorFetchingUserData": "Error fetching user data.",
+    "userNotFound": "User not found.",
+    "email": "Email",
+    "role": "Role",
+    "userProfile": "User Profile",
+    "backToUserList": "Back to User List"
+  }
+}

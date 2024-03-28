@@ -18,6 +18,7 @@ import { User } from "../../../types";
 import { useAppDispatch } from "../../../app/store";
 import { addUser, fetchUsers, updateUser } from "../../../state/user.slice";
 import { FAILED } from "../../../state/status";
+import { useTranslation } from "react-i18next";
 
 interface UserFormProps {
   open: boolean;
@@ -43,6 +44,7 @@ const UserForm = ({
   });
   const [confirmation, setConfirmation] = useState<string>("");
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!currentUser && open) {
@@ -84,14 +86,16 @@ const UserForm = ({
 
   return (
     <Dialog open={open}>
-      <DialogTitle>{currentUser ? "Edit User" : "Add New User"}</DialogTitle>
+      <DialogTitle>
+        {t(currentUser ? "userForm.editUser" : "userForm.addNewUser")}
+      </DialogTitle>
       <DialogContent>
         <Box component="form" noValidate autoComplete="off">
           <TextField
             autoFocus
             margin="dense"
             name="name"
-            label="Name"
+            label={t("userForm.name")}
             type="text"
             fullWidth
             variant="outlined"
@@ -101,7 +105,7 @@ const UserForm = ({
           <TextField
             margin="dense"
             name="email"
-            label="Email Address"
+            label={t("userForm.emailAddress")}
             type="email"
             fullWidth
             variant="outlined"
@@ -111,7 +115,7 @@ const UserForm = ({
           <TextField
             margin="dense"
             name="password"
-            label="Password"
+            label={t("userForm.password")}
             type="password"
             fullWidth
             variant="outlined"
@@ -119,32 +123,32 @@ const UserForm = ({
             onChange={handleChange}
           />
           <FormControl fullWidth margin="dense">
-            <InputLabel id="role-select-label">Role</InputLabel>
+            <InputLabel id="role-select-label">{t("userForm.role")}</InputLabel>
             <Select
               labelId="role-select-label"
               id="role-select"
               value={user.role}
-              label="Role"
+              label={t("userForm.role")}
               onChange={handleRoleChange}
             >
-              <MenuItem value={"user"}>User</MenuItem>
-              <MenuItem value={"admin"}>Admin</MenuItem>
+              <MenuItem value={"user"}>{t("userForm.user")}</MenuItem>
+              <MenuItem value={"admin"}>{t("userForm.admin")}</MenuItem>
             </Select>
           </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Save User</Button>
+        <Button onClick={onClose}>{t("userForm.cancel")}</Button>
+        <Button onClick={handleSubmit}>{t("userForm.saveUser")}</Button>
       </DialogActions>
       {status === FAILED && (
         <Typography color="error" className="form-message">
-          {error}
+          {t("userForm.error")}
         </Typography>
       )}
       {confirmation && (
         <Typography color="primary" className="form-message">
-          {confirmation}
+          {t("userForm.userSavedSuccessfully")}
         </Typography>
       )}
     </Dialog>

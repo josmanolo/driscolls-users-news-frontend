@@ -1,0 +1,62 @@
+{
+  "login": {
+    "welcome": "Iniciar sesión en la aplicación de noticias",
+    "emailLabel": "Correo Electrónico",
+    "passwordLabel": "Contraseña",
+    "loginButton": "Iniciar sesión",
+    "loginFailed": "Error al iniciar sesión"
+  },
+  "news": {
+    "fetchError": "Error al cargar las noticias",
+    "loadingNews": "Cargando noticias...",
+    "title": "Noticias"
+  },
+  "newsCard": {
+    "goToArticle": "Ir al Artículo"
+  },
+  "header": {
+    "newsApp": "App de Noticias",
+    "news": "Noticias",
+    "users": "Usuarios",
+    "logout": "Cerrar Sesión"
+  },
+  "userList": {
+    "title": "Lista de Usuarios",
+    "create": "Crear",
+    "deleteSuccess": "Usuario eliminado con éxito!",
+    "deleteError": "Error al eliminar usuario"
+  },
+  "userCard": {
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "profile": "Perfil"
+  },
+  "confirmDialog": {
+    "title": "Confirmar Eliminación",
+    "content": "¿Estás seguro de que quieres eliminar este usuario?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "userForm": {
+    "editUser": "Editar Usuario",
+    "addNewUser": "Agregar Nuevo Usuario",
+    "name": "Nombre",
+    "emailAddress": "Correo Electrónico",
+    "password": "Contraseña",
+    "role": "Rol",
+    "user": "Usuario",
+    "admin": "Administrador",
+    "cancel": "Cancelar",
+    "saveUser": "Guardar Usuario",
+    "successMessage": "¡Usuario guardado exitosamente!",
+    "error": "Error al guardar el usuario"
+  },
+  "userProfile": {
+    "errorFetchingUserData": "Error al obtener los datos del usuario.",
+    "userNotFound": "Usuario no encontrado.",
+    "email": "Correo Electrónico",
+    "role": "Rol",
+    "userProfile": "Perfil del Usuario",
+    "backToUserList": "Volver a la Lista de Usuarios"
+  }
+}

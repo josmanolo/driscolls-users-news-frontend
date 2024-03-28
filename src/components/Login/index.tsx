@@ -13,7 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const { status, error } = useSelector((state: RootState) => state.auth);
+  const { status } = useSelector((state: RootState) => state.auth);
   const { t } = useTranslation();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,12 +35,12 @@ const Login = () => {
     <Container maxWidth="xs" component="main">
       <Box className="login-container">
         <Typography variant="h4" component="h1">
-          Login to News App
+          {t('login.welcome')}
         </Typography>
 
         <Box component="form" onSubmit={handleLogin}>
           <TextField
-            label="Email"
+            label={t('login.emailLabel')}
             type="email"
             fullWidth
             margin="normal"
@@ -48,7 +48,7 @@ const Login = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
-            label="Password"
+            label={t('login.passwordLabel')}
             type="password"
             fullWidth
             margin="normal"
@@ -62,9 +62,9 @@ const Login = () => {
             fullWidth
             className="login-button"
           >
-            Login
+            {t('login.loginButton')}
           </Button>
-          {status === FAILED && <Typography color="error">{error}</Typography>}
+          {status === FAILED && <Typography color="error">{t('login.loginFailed')}</Typography>}
         </Box>
       </Box>
     </Container>

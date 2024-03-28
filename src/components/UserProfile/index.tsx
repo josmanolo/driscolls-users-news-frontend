@@ -12,6 +12,7 @@ import {
 import { User } from "../../types";
 import "./styles.scss";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -19,6 +20,7 @@ const UserProfile = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -47,10 +49,13 @@ const UserProfile = () => {
     if (error)
       return (
         <Typography variant="h5" color="error">
-          {error}
+          {t(error)}
         </Typography>
       );
-    if (!user) return <Typography variant="h6">User not found</Typography>;
+    if (!user)
+      return (
+        <Typography variant="h6">{t("userProfile.userNotFound")}</Typography>
+      );
 
     return (
       <Card>
@@ -59,20 +64,20 @@ const UserProfile = () => {
             {user.name}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Email: {user.email}
+            {t("userProfile.email")}: {user.email}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Role: {user.role}
+            {t("userProfile.role")}: {user.role}
           </Typography>
         </CardContent>
       </Card>
     );
-  }, [loading, error, user]);
+  }, [loading, error, user, t]);
 
   return (
     <Container maxWidth="sm" className="profile-container">
       <Typography variant="h4" component="h4">
-        User Profile
+        {t("userProfile.userProfile")}
       </Typography>
       {renderContent()}
       {location.state?.fromUserList && (
@@ -82,7 +87,7 @@ const UserProfile = () => {
           to="/users"
           className="back-button"
         >
-          Back to User List
+          {t("userProfile.backToUserList")}
         </Button>
       )}
     </Container>

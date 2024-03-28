@@ -1,16 +1,25 @@
-import { AppBar, Box, IconButton, Toolbar, Typography, Button } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  IconButton,
+  Toolbar,
+  Typography,
+  Button,
+} from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../../app/store";
 import { logout } from "../../../state/auth.slice";
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
   const { user, token } = useSelector((state: RootState) => state.auth);
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
   const isAuthenticated = token !== null;
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   const handleLogout = () => {
     dispatch(logout());
@@ -20,16 +29,16 @@ const Header = () => {
     <AppBar position="sticky">
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          News App
+          {t("header.newsApp")}
         </Typography>
         {isAuthenticated && (
           <>
             <Button color="inherit" component={Link} to="/news">
-              News
+              {t("header.news")}
             </Button>
             {isAdmin && (
               <Button color="inherit" component={Link} to="/users">
-                Users
+                {t("header.users")}
               </Button>
             )}
             <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>

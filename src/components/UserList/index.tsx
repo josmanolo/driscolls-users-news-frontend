@@ -18,6 +18,7 @@ import { deleteUser, fetchUsers } from "../../state/user.slice";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
 import { FAILED, LOADING, SUCCEEDED } from "../../state/status";
+import { useTranslation } from "react-i18next";
 
 const UserList = () => {
   const [openForm, setOpenForm] = useState<boolean>(false);
@@ -29,6 +30,7 @@ const UserList = () => {
   );
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     entities: users,
     status,
@@ -60,7 +62,7 @@ const UserList = () => {
       dispatch(deleteUser(selectedUserId))
         .unwrap()
         .then(() => {
-          setConfirmation("User deleted successfully!");
+          setConfirmation(t("userList.deleteSuccess"));
           dispatch(fetchUsers());
           setTimeout(() => setConfirmation(""), 3000);
         })
@@ -83,14 +85,14 @@ const UserList = () => {
     <Container maxWidth="lg" className="users-list">
       <Box className="list-header">
         <Typography variant="h4" component="h2">
-          User List
+          {t("userList.title")} 
         </Typography>
         <Button
           startIcon={<AddIcon />}
           variant="contained"
           onClick={handleOpenForm}
         >
-          Create
+          {t("userList.create")}
         </Button>
       </Box>
       {status === LOADING && <CircularProgress />}
