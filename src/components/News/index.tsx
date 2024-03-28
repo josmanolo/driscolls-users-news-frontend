@@ -1,14 +1,9 @@
-import {
-  Typography,
-  Container,
-  Grid,
-  CircularProgress,
-} from "@mui/material";
+import { Typography, Container, Grid, CircularProgress } from "@mui/material";
 import { RootState, useAppDispatch } from "../../app/store";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchNews } from "../../state/news.slice";
-import { FAILED, LOADING } from "../../state/status";
+import { FAILED, IDLE, LOADING } from "../../state/status";
 import NewsCard from "./NewsCard";
 
 const News = () => {
@@ -18,8 +13,10 @@ const News = () => {
   );
 
   useEffect(() => {
-    dispatch(fetchNews());
-  }, [dispatch]);
+    if (status === IDLE || (items.length === 0 && status !== LOADING)) {
+      dispatch(fetchNews());
+    }
+  }, [dispatch, items.length, status]);
 
   return (
     <>

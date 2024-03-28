@@ -21,7 +21,6 @@ const UserProfile = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log(location)
     const fetchUser = async () => {
       setLoading(true);
       try {

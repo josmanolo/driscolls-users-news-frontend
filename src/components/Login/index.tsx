@@ -6,6 +6,7 @@ import { RootState, useAppDispatch } from "../../app/store";
 import { useSelector } from "react-redux";
 import { login } from "../../state/auth.slice";
 import { FAILED } from "../../state/status";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -13,16 +14,14 @@ const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { status, error } = useSelector((state: RootState) => state.auth);
+  const { t } = useTranslation();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(login({ email, password }))
       .unwrap()
       .then((res) => {
-
         const userRole = res.user.role;
-        
-        console.log(res)
 
         if (userRole === "admin") {
           navigate("/users");

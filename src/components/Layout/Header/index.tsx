@@ -11,7 +11,6 @@ const Header = () => {
   const dispatch = useAppDispatch();
   const isAuthenticated = token !== null;
   const isAdmin = user?.role === 'admin';
-  console.log(user)
 
   const handleLogout = () => {
     dispatch(logout());

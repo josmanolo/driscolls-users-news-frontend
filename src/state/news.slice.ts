@@ -37,13 +37,23 @@ export const fetchNews = createAsyncThunk(
         },
       });
 
+      const hashCode = (s: string) =>
+        Math.abs(
+          s.split("").reduce((a, b) => {
+            a = (a << 5) - a + b.charCodeAt(0);
+            return a & a;
+          }, 0)
+        ).toString();
+
       const newsWithIds = response.data.articles
-        .map((article: any) => ({
-          ...article,
-          id: btoa(
-            encodeURIComponent(`${article.publishedAt}_${article.title}`)
-          ).slice(0, 12),
-        }))
+        .map((article: any) => {
+          const id = hashCode(`${article.publishedAt}_${article.title}`);
+
+          return {
+            ...article,
+            id,
+          };
+        })
         .filter(
           (article: any) =>
             article.content && article.description && article.urlToImage
