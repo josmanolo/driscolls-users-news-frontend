@@ -4,7 +4,10 @@
     "emailLabel": "Correo Electrónico",
     "passwordLabel": "Contraseña",
     "loginButton": "Iniciar sesión",
-    "loginFailed": "Error al iniciar sesión"
+    "loginFailed": "Error al iniciar sesión",
+    "emailRequired": "El email es requerido",
+    "emailInvalid": "Ingresa un email valido",
+    "passwordRequired": "La contraseña es requerida"
   },
   "news": {
     "fetchError": "Error al cargar las noticias",
@@ -49,7 +52,12 @@
     "cancel": "Cancelar",
     "saveUser": "Guardar Usuario",
     "successMessage": "¡Usuario guardado exitosamente!",
-    "error": "Error al guardar el usuario"
+    "error": "Error al guardar el usuario",
+    "errors": {
+      "nameRequired": "El nombre es requerido",
+      "invalidEmail": "Correo electrónico inválido",
+      "passwordLength": "La contraseña debe tener al menos 6 caracteres"
+    }
   },
   "userProfile": {
     "errorFetchingUserData": "Error al obtener los datos del usuario.",

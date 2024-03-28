@@ -4,7 +4,10 @@
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "loginButton": "Login",
-    "loginFailed": "Login failed"
+    "loginFailed": "Login failed",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Enter a valid email",
+    "passwordRequired": "Password is required"
   },
   "news": {
     "fetchError": "Error fetching news",
@@ -49,7 +52,12 @@
     "cancel": "Cancel",
     "saveUser": "Save User",
     "successMessage": "User saved successfully!",
-    "error": "Error saving user"
+    "error": "Error saving user",
+    "errors": {
+      "nameRequired": "Name is required",
+      "invalidEmail": "Invalid email address",
+      "passwordLength": "Password must be at least 6 characters long"
+    }
   },
   "userProfile": {
     "errorFetchingUserData": "Error fetching user data.",

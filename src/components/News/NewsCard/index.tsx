@@ -6,7 +6,6 @@ import {
   CardMedia,
   Button,
   Typography,
-  Grid,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -23,8 +22,7 @@ const NewsCard = ({ news }: NewsCardProps) => {
   const { t } = useTranslation();
 
   return (
-    <Grid item xs={12} md={6} lg={4}>
-      <Card sx={{ maxWidth: 345 }}>
+      <Card>
         {news.urlToImage && (
           <CardMedia
             component="img"
@@ -52,7 +50,6 @@ const NewsCard = ({ news }: NewsCardProps) => {
           </Button>
         </CardActions>
       </Card>
-    </Grid>
   );
 };
 

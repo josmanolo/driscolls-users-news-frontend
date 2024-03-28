@@ -5,6 +5,8 @@ import {
   Toolbar,
   Typography,
   Button,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -20,6 +22,8 @@ const Header = () => {
   const { t } = useTranslation();
   const isAuthenticated = token !== null;
   const isAdmin = user?.role === "admin";
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('md'));
 
   const handleLogout = () => {
     dispatch(logout());
@@ -28,28 +32,45 @@ const Header = () => {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          {t("header.newsApp")}
-        </Typography>
-        {isAuthenticated && (
-          <>
-            <Button color="inherit" component={Link} to="/news">
-              {t("header.news")}
-            </Button>
-            {isAdmin && (
-              <Button color="inherit" component={Link} to="/users">
-                {t("header.users")}
-              </Button>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            flexDirection: matches ? "row" : "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            {t("header.newsApp")}
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+            {isAuthenticated && (
+              <>
+                <Button color="inherit" component={Link} to="/news">
+                  {t("header.news")}
+                </Button>
+                {isAdmin && (
+                  <Button color="inherit" component={Link} to="/users">
+                    {t("header.users")}
+                  </Button>
+                )}
+                <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
+                  <AccountCircleIcon sx={{ mr: 1 }} />
+                  <Typography variant="body1" noWrap>
+                    {user?.name}
+                  </Typography>
+                </Box>
+                <IconButton
+                  color="inherit"
+                  onClick={handleLogout}
+                  sx={{ ml: 2 }}
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </>
             )}
-            <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
-              <AccountCircleIcon sx={{ mr: 1 }} />
-              <Typography variant="body1">{user?.name}</Typography>
-            </Box>
-            <IconButton color="inherit" onClick={handleLogout}>
-              <LogoutIcon />
-            </IconButton>
-          </>
-        )}
+          </Box>
+        </Box>
       </Toolbar>
     </AppBar>
   );

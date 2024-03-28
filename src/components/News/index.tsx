@@ -19,21 +19,19 @@ const News = () => {
   }, [dispatch, items.length, status]);
 
   return (
-    <>
-      <>
-        <Container maxWidth="lg" sx={{ mt: 3 }}>
-          {status === FAILED && (
-            <Typography color="error">{t("news.fetchError")}</Typography>
-          )}
-          {status === LOADING && items.length === 0 && <CircularProgress />}
-          <Grid container spacing={3}>
-            {items.map((news) => (
-              <NewsCard key={news.id} news={news} />
-            ))}
+    <Container maxWidth="lg" sx={{ mt: 3 }}>
+      {status === FAILED && (
+        <Typography color="error">{t("news.fetchError")}</Typography>
+      )}
+      {status === LOADING && items.length === 0 && <CircularProgress />}
+      <Grid container spacing={3}>
+        {items.map((news) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={news.id}>
+            <NewsCard news={news} />
           </Grid>
-        </Container>
-      </>
-    </>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

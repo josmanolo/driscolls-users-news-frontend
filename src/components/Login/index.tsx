@@ -13,47 +13,83 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
   const { status } = useSelector((state: RootState) => state.auth);
   const { t } = useTranslation();
 
+  const validateForm = () => {
+    let isValid = true;
+    setEmailError("");
+    setPasswordError("");
+
+    // Email validation
+    if (!email) {
+      setEmailError(t("login.emailRequired"));
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError(t("login.emailInvalid"));
+      isValid = false;
+    }
+
+    // Password validation
+    if (!password) {
+      setPasswordError(t("login.passwordRequired"));
+      isValid = false;
+    }
+
+    return isValid;
+  };
+
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(login({ email, password }))
-      .unwrap()
-      .then((res) => {
-        const userRole = res.user.role;
+    const isFormValid = validateForm();
 
-        if (userRole === "admin") {
-          navigate("/users");
-        } else {
-          navigate("/news");
-        }
-      });
+    if (isFormValid) {
+      dispatch(login({ email, password }))
+        .unwrap()
+        .then((res) => {
+          const userRole = res.user.role;
+
+          if (userRole === "admin") {
+            navigate("/users");
+          } else {
+            navigate("/news");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   return (
     <Container maxWidth="xs" component="main">
       <Box className="login-container">
         <Typography variant="h4" component="h1">
-          {t('login.welcome')}
+          {t("login.welcome")}
         </Typography>
 
-        <Box component="form" onSubmit={handleLogin}>
+        <Box component="form" onSubmit={handleLogin} noValidate>
           <TextField
-            label={t('login.emailLabel')}
+            label={t("login.emailLabel")}
             type="email"
             fullWidth
             margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            error={!!emailError}
+            helperText={emailError}
           />
           <TextField
-            label={t('login.passwordLabel')}
+            label={t("login.passwordLabel")}
             type="password"
             fullWidth
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            error={!!passwordError}
+            helperText={passwordError}
           />
           <Button
             type="submit"
@@ -62,9 +98,11 @@ const Login = () => {
             fullWidth
             className="login-button"
           >
-            {t('login.loginButton')}
+            {t("login.loginButton")}
           </Button>
-          {status === FAILED && <Typography color="error">{t('login.loginFailed')}</Typography>}
+          {status === FAILED && (
+            <Typography color="error">{t("login.loginFailed")}</Typography>
+          )}
         </Box>
       </Box>
     </Container>

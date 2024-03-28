@@ -17,7 +17,7 @@ import {
 import { User } from "../../../types";
 import { useAppDispatch } from "../../../app/store";
 import { addUser, fetchUsers, updateUser } from "../../../state/user.slice";
-import { FAILED } from "../../../state/status";
+import { FAILED, SUCCEEDED } from "../../../state/status";
 import { useTranslation } from "react-i18next";
 
 interface UserFormProps {
@@ -26,6 +26,12 @@ interface UserFormProps {
   currentUser?: User | null;
   status?: string | null;
   error?: string | null;
+}
+
+interface ValidationErrors {
+  name: string;
+  email: string;
+  password: string;
 }
 
 const UserForm = ({
@@ -42,7 +48,11 @@ const UserForm = ({
     role: "",
     password: "",
   });
-  const [confirmation, setConfirmation] = useState<string>("");
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({
+    name: "",
+    email: "",
+    password: "",
+  });
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
@@ -64,24 +74,40 @@ const UserForm = ({
   };
 
   const handleSubmit = () => {
-    const action = currentUser?._id ? updateUser(user) : addUser(user);
-    dispatch(action)
-      .unwrap()
-      .then(() => {
-        dispatch(fetchUsers());
-        setConfirmation("User saved successfully!");
-        onClose();
-      })
-      .finally(() => {
-        setConfirmation("");
-        setUser({
-          _id: "",
-          name: "",
-          email: "",
-          role: "",
-          password: "",
+    let errors = { name: "", email: "", password: "" };
+    let formIsValid = true;
+
+    if (!user.name) {
+      errors.name = t("userForm.errors.nameRequired");
+      formIsValid = false;
+    }
+
+    if (
+      !user.email ||
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(user.email)
+    ) {
+      errors.email = t("userForm.errors.invalidEmail");
+      formIsValid = false;
+    }
+
+    if (!user.password || user.password.length < 6) {
+      errors.password = t("userForm.errors.passwordLength");
+      formIsValid = false;
+    }
+
+    setValidationErrors(errors);
+
+    if (formIsValid) {
+      const action = currentUser?._id ? updateUser(user) : addUser(user);
+      dispatch(action)
+        .unwrap()
+        .then(() => {
+          onClose();
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      });
+    }
   };
 
   return (
@@ -101,6 +127,8 @@ const UserForm = ({
             variant="outlined"
             value={user.name}
             onChange={handleChange}
+            error={!!validationErrors.name}
+            helperText={validationErrors.name}
           />
           <TextField
             margin="dense"
@@ -111,6 +139,8 @@ const UserForm = ({
             variant="outlined"
             value={user.email}
             onChange={handleChange}
+            error={!!validationErrors.email}
+            helperText={validationErrors.email}
           />
           <TextField
             margin="dense"
@@ -121,6 +151,8 @@ const UserForm = ({
             variant="outlined"
             value={user.password}
             onChange={handleChange}
+            error={!!validationErrors.password}
+            helperText={validationErrors.password}
           />
           <FormControl fullWidth margin="dense">
             <InputLabel id="role-select-label">{t("userForm.role")}</InputLabel>
@@ -139,14 +171,16 @@ const UserForm = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{t("userForm.cancel")}</Button>
-        <Button onClick={handleSubmit}>{t("userForm.saveUser")}</Button>
+        <Button onClick={handleSubmit}>
+          {t("userForm.saveUser")}
+        </Button>
       </DialogActions>
       {status === FAILED && (
         <Typography color="error" className="form-message">
           {t("userForm.error")}
         </Typography>
       )}
-      {confirmation && (
+      {status === SUCCEEDED && (
         <Typography color="primary" className="form-message">
           {t("userForm.userSavedSuccessfully")}
         </Typography>
