@@ -10,11 +10,10 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { User } from "../../types";
 import UserCard from "./UserCard";
-
 import ConfirmDialog from "./ConfirmDialog";
 import "./styles.scss";
 import UserForm from "./UserForm";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { deleteUser, fetchUsers } from "../../state/user.slice";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../../app/store";
@@ -29,15 +28,21 @@ const UserList = () => {
     null
   );
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const {
     entities: users,
     status,
     error,
   } = useSelector((state: RootState) => state.users);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    if (user?.role !== "admin") {
+      navigate("/news");
+    }
+
     dispatch(fetchUsers());
-  }, [dispatch]);
+  }, [dispatch, navigate, user?.role]);
 
   const handleOpenForm = () => {
     setCurrentUserForEdit(null);

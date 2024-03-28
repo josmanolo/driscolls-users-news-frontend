@@ -5,8 +5,31 @@ import UserList from "./components/UserList";
 import UserProfile from "./components/UserProfile";
 import News from "./components/News";
 import NewsDetails from "./components/NewsDetail";
+import { RootState, useAppDispatch } from "./app/store";
+import { useEffect } from "react";
+import { setAuthToken, setAuthUser } from "./state/auth.slice";
+import { useSelector } from "react-redux";
+import Layout from "./components/Layout";
 
 function App() {
+  const dispatch = useAppDispatch();
+  const { token, user } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    if (!token && !user) {
+      const storedToken = sessionStorage.getItem("authToken");
+      const storedUser = sessionStorage.getItem("user");
+
+      if (storedToken) {
+        dispatch(setAuthToken(storedToken));
+      }
+      if (storedUser) {
+        const user = JSON.parse(storedUser);
+        dispatch(setAuthUser(user));
+      }
+    }
+  }, [dispatch, token, user]);
+
   return (
     <Router>
       <Routes>
@@ -15,7 +38,9 @@ function App() {
           path="/users"
           element={
             <PrivateRoute>
-              <UserList />
+              <Layout>
+                <UserList />
+              </Layout>
             </PrivateRoute>
           }
         />
@@ -23,7 +48,9 @@ function App() {
           path="/users/:userId"
           element={
             <PrivateRoute>
-              <UserProfile />
+              <Layout>
+                <UserProfile />
+              </Layout>
             </PrivateRoute>
           }
         />
@@ -31,7 +58,9 @@ function App() {
           path="/news"
           element={
             <PrivateRoute>
-              <News />
+              <Layout>
+                <News />
+              </Layout>
             </PrivateRoute>
           }
         />
@@ -39,7 +68,9 @@ function App() {
           path="/news/:id"
           element={
             <PrivateRoute>
-              <NewsDetails />
+              <Layout>
+                <NewsDetails />
+              </Layout>
             </PrivateRoute>
           }
         />

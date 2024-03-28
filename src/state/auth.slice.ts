@@ -33,6 +33,8 @@ export const login = createAsyncThunk<
       "http://localhost:3001/api/auth/login",
       { email, password }
     );
+    sessionStorage.setItem("authToken", response.data.token);
+    sessionStorage.setItem("user", JSON.stringify(response.data.user));
     return response.data;
   } catch (error: any) {
     return rejectWithValue(error.response.data);
@@ -42,7 +44,22 @@ export const login = createAsyncThunk<
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setAuthToken: (state, action: PayloadAction<string | null>) => {
+      state.token = action.payload;
+    },
+    setAuthUser: (state, action: PayloadAction<User | null>) => {
+      state.user = action.payload;
+    },
+    logout: (state) => {
+      sessionStorage.removeItem("authToken");
+      sessionStorage.removeItem("user");
+      state.user = null;
+      state.token = null;
+      state.status = IDLE;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -51,7 +68,7 @@ const authSlice = createSlice({
       .addCase(
         login.fulfilled,
         (state, action: PayloadAction<LoginResponse>) => {
-          console.log(action.payload)
+          console.log(action.payload);
           state.status = SUCCEEDED;
           state.user = action.payload.user;
           state.token = action.payload.token;
@@ -68,6 +85,6 @@ const authSlice = createSlice({
   },
 });
 
-
-const { reducer: authReducer } = authSlice;
+const { reducer: authReducer, actions } = authSlice;
+export const { logout, setAuthToken, setAuthUser } = actions;
 export default authReducer;
